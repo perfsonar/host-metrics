@@ -1,0 +1,10 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ --with systemd
+
+override_dh_auto_test:
+
+override_dh_installinit:
+#not sure this does anything
+	dh_installinit --package=prometheus-node-exporter --name=node_exporter

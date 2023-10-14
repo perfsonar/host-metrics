@@ -1,0 +1,13 @@
+Source: prometheus-node-exporter
+Section: misc
+Priority: optional
+Build-Depends:
+ debhelper (>= 10)
+Maintainer: perfSONAR developers <debian@perfsonar.net>
+
+Package: prometheus-node-exporter
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Prometheus exporter for machine metrics, written in Go with pluggable metric collectors.
+ Prometheus exporter for hardware and OS metrics exposed by *NIX kernels,
+ written in Go with pluggable metric collectors.
