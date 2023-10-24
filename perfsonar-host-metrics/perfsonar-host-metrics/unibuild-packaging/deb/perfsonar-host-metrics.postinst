@@ -13,10 +13,10 @@ case "$1" in
             #set node_exporter opts
             bash /usr/lib/perfsonar/host_metrics/exporter_opts.sh
             
-            #enable node_exporter
-            systemctl daemon-reload
-            systemctl enable node_exporter.service
-            systemctl restart node_exporter.service
+            #enable node_exporter - ignore errors for docker build env
+            systemctl daemon-reload || :
+            systemctl enable node_exporter.service || :
+            systemctl restart node_exporter.service || :
 
             # Apache setup
             if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
