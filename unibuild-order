@@ -8,3 +8,4 @@ changecom()dnl
 # more information.
 #
 prometheus-node-exporter
+perfsonar-host-metrics
