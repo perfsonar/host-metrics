@@ -33,7 +33,7 @@ BuildRequires:  selinux-policy-devel
 %{?selinux_requires}
 
 %description
-A package that installs sets-up Prometheus node_exporter for a perfSONAR install
+A package that installs and sets-up Prometheus node_exporter for a perfSONAR install
 
 %prep
 %setup -q -n perfsonar-host-metrics-%{version}

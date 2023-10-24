@@ -1,0 +1,5 @@
+perfsonar-host-metrics (5.0.5-1) perfsonar-5.0; urgency=low
+
+  * Initial release. 
+
+ -- perfSONAR developers <debian@perfsonar.net>  Tue, 24 Oct 2023 19:19:42 -0400

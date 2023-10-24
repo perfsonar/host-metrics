@@ -1,0 +1,14 @@
+Source: perfsonar-host-metrics
+Maintainer: perfSONAR developers <debian@perfsonar.net>
+Section: net
+Priority: optional
+Standards-Version: 4.3.0
+Build-Depends: debhelper (>= 10)
+Homepage: http://www.perfsonar.net
+
+Package: perfsonar-host-metrics
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, prometheus-node-exporter,
+ openssl, apache2, apache2-ssl-dev, perfsonar-common
+Description: perfSONAR Host Metrics
+ A package that installs and sets-up Prometheus node_exporter for a perfSONAR install
