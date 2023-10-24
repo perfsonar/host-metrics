@@ -19,7 +19,11 @@ BuildRequires: systemd-rpm-macros
 %endif
 %{?systemd_requires}
 Requires(pre): shadow-utils
-
+# SELinux support
+BuildRequires: selinux-policy-devel
+Requires: policycoreutils, libselinux-utils
+Requires(post): selinux-policy-targeted, policycoreutils
+Requires(postun): policycoreutils
 
 %description
 Prometheus exporter for hardware and OS metrics exposed by *NIX kernels,
@@ -33,10 +37,14 @@ written in Go with pluggable metric collectors.
 
 %build
 make install
+make -f /usr/share/selinux/devel/Makefile -C selinux node_exporter.pp
 
 
 %install
 mkdir -vp %{buildroot}%{_sharedstatedir}/prometheus
+mkdir -p %{buildroot}/usr/share/selinux/packages/
+mv selinux/*.pp %{buildroot}/usr/share/selinux/packages/
+rm -rf %{buildroot}/usr/lib/perfsonar/selinux
 install -D -m 755 bin/%{service_name} %{buildroot}%{_bindir}/%{service_name}
 install -D -m 644 etc/default/%{service_name} %{buildroot}%{_sysconfdir}/default/%{service_name}
 install -D -m 644 %{service_name}.service %{buildroot}%{_unitdir}/%{service_name}.service
@@ -50,6 +58,11 @@ exit 0
 
 
 %post
+#Enable selinux
+semodule -n -i /usr/share/selinux/packages/node_exporter.pp
+if /usr/sbin/selinuxenabled; then
+    /usr/sbin/load_policy
+fi
 %systemd_post %{service_name}.service
 
 
@@ -59,7 +72,12 @@ exit 0
 
 %postun
 %systemd_postun %{service_name}.service
-
+if [ $1 -eq 0 ]; then
+    semodule -n -r node_exporter
+    if /usr/sbin/selinuxenabled; then
+       /usr/sbin/load_policy
+    fi
+fi
 
 %files
 %defattr(-,root,root,-)
@@ -67,4 +85,5 @@ exit 0
 %config(noreplace) %{_sysconfdir}/default/%{service_name}
 %dir %attr(755, %{user}, %{group}) %{_sharedstatedir}/prometheus
 %{_unitdir}/%{service_name}.service
+%attr(0644,root,root) %{_datadir}/selinux/packages/node_exporter.pp
 

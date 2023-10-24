@@ -1,0 +1,8 @@
+policy_module(node_exporter, 1.0)
+
+require {
+        type init_t;
+}
+
+#============= init_t ==============
+userdom_write_user_tmp_files(init_t)
