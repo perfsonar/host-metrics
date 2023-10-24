@@ -5,7 +5,7 @@ jobs:
     strategy:
       #fail-fast: true
       matrix:
-          os: [ 'el9', 'u20_amd64'  ]
+          os: [ 'el9', 'u20' ]
  
     runs-on: ubuntu-latest
    
@@ -29,7 +29,7 @@ jobs:
          if: ${{ matrix.os  == 'd12' }} 
          run: export DEBIAN_FRONTEND=noninteractive && curl -s http://downloads.perfsonar.net/debian/perfsonar-minor-snapshot.gpg.key | apt-key add - && curl -s -o /etc/apt/sources.list.d/perfsonar-minor-snapshot.list http://downloads.perfsonar.net/debian/perfsonar-minor-snapshot.list && apt-get update && echo && echo 
        - name: install deps u20
-         if: ${{ startsWith(matrix.os, 'u20') }} 
+         if: ${{ matrix.os  == 'u20' }} 
          run: export DEBIAN_FRONTEND=noninteractive && curl -s http://downloads.perfsonar.net/debian/perfsonar-minor-snapshot.gpg.key | apt-key add - && curl -s -o /etc/apt/sources.list.d/perfsonar-minor-snapshot.list http://downloads.perfsonar.net/debian/perfsonar-minor-snapshot.list && apt-get update && echo && echo 
        
        - name: build
