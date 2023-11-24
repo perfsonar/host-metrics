@@ -10,5 +10,6 @@ Package: perfsonar-host-metrics
 Architecture: all
 Depends: ${shlibs:Depends}, ${misc:Depends}, prometheus-node-exporter,
  openssl, apache2, apache2-ssl-dev, perfsonar-common
-Description: perfSONAR Host Metrics
- A package that installs and sets-up Prometheus node_exporter for a perfSONAR install
+Description: Prometheus node-exporter integration with perfSONAR
+ A package that installs and sets-up Prometheus node_exporter for a perfSONAR
+ to collect and report host metrics.
