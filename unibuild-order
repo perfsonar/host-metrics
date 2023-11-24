@@ -7,5 +7,5 @@ changecom()dnl
 # See the documentation at https://github.com/perfsonar/unibuild for
 # more information.
 #
-prometheus-node-exporter
+ifelse(FAMILY,RedHat,prometheus-node-exporter)
 perfsonar-host-metrics
