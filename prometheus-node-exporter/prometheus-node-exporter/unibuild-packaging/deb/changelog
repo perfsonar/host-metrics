@@ -1,4 +1,4 @@
-prometheus-node-exporter (1.6.1) experimental; urgency=low
+prometheus-node-exporter (1.6.1-1) experimental; urgency=low
 
   * New prometheus-node-exporter package
   
