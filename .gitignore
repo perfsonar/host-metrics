@@ -10,5 +10,6 @@ unibuild-log
 unibuild-work/
 unibuild-repo/
 DOSB/
+multiarch_build/
 
 
