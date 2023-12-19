@@ -25,6 +25,7 @@ BuildArch:		noarch
 Requires:       perfsonar-common
 Requires:       openssl
 Requires:       prometheus-node-exporter
+Requires:       python-perfsonar-psconfig
 Requires:       httpd
 Requires:       mod_ssl
 Requires:       selinux-policy-%{selinuxtype}
