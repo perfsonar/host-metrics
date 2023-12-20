@@ -1,0 +1,11 @@
+
+module perfsonar_host_metrics 1.0;
+
+require {
+	type init_t;
+	type lsregistrationdaemon_var_lib_t;
+	class file read;
+}
+
+#============= init_t ==============
+allow init_t lsregistrationdaemon_var_lib_t:file read;

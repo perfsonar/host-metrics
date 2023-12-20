@@ -33,6 +33,10 @@ Requires:       mod_ssl
 Requires:       selinux-policy-%{selinuxtype}
 Requires(post): selinux-policy-%{selinuxtype}
 BuildRequires:  selinux-policy-devel
+Requires:       policycoreutils, libselinux-utils
+Requires(post): policycoreutils
+Requires(postun): policycoreutils
+
 %{?selinux_requires}
 
 %description
@@ -42,16 +46,26 @@ A package that installs and sets-up Prometheus node_exporter for a perfSONAR ins
 %setup -q -n perfsonar-host-metrics-%{version}
 
 %build
+make -f /usr/share/selinux/devel/Makefile -C selinux perfsonar_host_metrics.pp
 
 %install
 make PERFSONAR-ROOTPATH=%{buildroot}/%{pkg_install_base} HTTPD-CONFIGPATH=%{buildroot}/%{httpd_config_base} install
 mkdir -p %{buildroot}/%{_unitdir}/
 install -m 644 *.service %{buildroot}/%{_unitdir}/
+mkdir -p %{buildroot}/usr/share/selinux/packages/
+mv selinux/*.pp %{buildroot}/usr/share/selinux/packages/
 
 %clean
 rm -rf %{buildroot}
 
 %post
+
+#selinux
+semodule -n -i /usr/share/selinux/packages/perfsonar_host_metrics.pp
+if /usr/sbin/selinuxenabled; then
+    /usr/sbin/load_policy
+fi
+
 #Restart/enable opensearch and logstash
 %systemd_post node_exporter.service
 %systemd_post perfsonar-host-exporter.service
@@ -82,6 +96,10 @@ fi
 %systemd_postun_with_restart perfsonar-host-exporter.service
 if [ $1 -eq 0 ]; then
     %selinux_unset_booleans -s %{selinuxtype} %{selinuxbooleans}
+    semodule -n -r perfsonar_host_metrics
+    if /usr/sbin/selinuxenabled; then
+       /usr/sbin/load_policy
+    fi
 fi
 
 %files
@@ -91,6 +109,7 @@ fi
 %attr(0755, perfsonar, perfsonar) %{pkg_install_base}/perfsonar_host_exporter
 %attr(0644, perfsonar, perfsonar) %{httpd_config_base}/apache-node_exporter.conf
 %attr(0644, perfsonar, perfsonar) %{httpd_config_base}/apache-perfsonar_host_exporter.conf
+%attr(0644,root,root) /usr/share/selinux/packages/*
 %{_unitdir}/perfsonar-host-exporter.service
 
 %changelog
