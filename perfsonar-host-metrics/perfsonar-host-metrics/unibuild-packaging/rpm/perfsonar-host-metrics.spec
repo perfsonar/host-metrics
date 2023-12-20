@@ -26,6 +26,8 @@ Requires:       perfsonar-common
 Requires:       openssl
 Requires:       prometheus-node-exporter
 Requires:       python-perfsonar-psconfig
+Requires:       python-pscheduler
+Requires:       python-requests
 Requires:       httpd
 Requires:       mod_ssl
 Requires:       selinux-policy-%{selinuxtype}
@@ -43,6 +45,8 @@ A package that installs and sets-up Prometheus node_exporter for a perfSONAR ins
 
 %install
 make PERFSONAR-ROOTPATH=%{buildroot}/%{pkg_install_base} HTTPD-CONFIGPATH=%{buildroot}/%{httpd_config_base} install
+mkdir -p %{buildroot}/%{_unitdir}/
+install -m 644 *.service %{buildroot}/%{_unitdir}/
 
 %clean
 rm -rf %{buildroot}
@@ -50,6 +54,7 @@ rm -rf %{buildroot}
 %post
 #Restart/enable opensearch and logstash
 %systemd_post node_exporter.service
+%systemd_post perfsonar-host-exporter.service
 if [ "$1" = "1" ]; then
     #set SELinux booleans to allow httpd proxy to work
     %selinux_set_booleans -s %{selinuxtype} %{selinuxbooleans}
@@ -61,6 +66,8 @@ if [ "$1" = "1" ]; then
     systemctl daemon-reload
     systemctl enable node_exporter.service
     systemctl restart node_exporter.service
+    systemctl enable perfsonar-host-exporter.service
+    systemctl restart perfsonar-host-exporter.service
     #Enable and restart apache for reverse proxy
     systemctl enable httpd
     systemctl restart httpd
@@ -68,9 +75,11 @@ fi
 
 %preun
 %systemd_preun node_exporter.service
+%systemd_preun perfsonar-host-exporter.service
 
 %postun
 %systemd_postun_with_restart node_exporter.service
+%systemd_postun_with_restart perfsonar-host-exporter.service
 if [ $1 -eq 0 ]; then
     %selinux_unset_booleans -s %{selinuxtype} %{selinuxbooleans}
 fi
@@ -79,7 +88,10 @@ fi
 %defattr(0644,perfsonar,perfsonar,0755)
 %license LICENSE
 %attr(0755, perfsonar, perfsonar) %{pkg_install_base}/exporter_opts.sh
+%attr(0755, perfsonar, perfsonar) %{pkg_install_base}/perfsonar_host_exporter
 %attr(0644, perfsonar, perfsonar) %{httpd_config_base}/apache-node_exporter.conf
+%attr(0644, perfsonar, perfsonar) %{httpd_config_base}/apache-perfsonar_host_exporter.conf
+%{_unitdir}/perfsonar-host-exporter.service
 
 %changelog
 * Tue Oct 24 2023 andy@es.net 5.0.5-0.0.a1

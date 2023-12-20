@@ -13,10 +13,12 @@ case "$1" in
             #set node_exporter opts
             bash /usr/lib/perfsonar/host_metrics/exporter_opts.sh
             
-            #enable node_exporter - ignore errors for docker build env
+            #enable exporters - ignore errors for docker build env
             systemctl daemon-reload || :
             systemctl enable node_exporter.service || :
             systemctl restart node_exporter.service || :
+            systemctl enable perfsonar-host-exporter.service || :
+            systemctl restart perfsonar-host-exporter.service || :
 
             # Apache setup
             if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
@@ -27,6 +29,7 @@ case "$1" in
                 apache2_invoke enmod proxy
                 apache2_invoke enmod proxy_http
                 apache2_invoke enconf apache-node_exporter
+                apache2_invoke enconf apache-perfsonar_host_exporter
             fi
         fi
     ;;

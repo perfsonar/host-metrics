@@ -1,2 +1,5 @@
 apache-node_exporter.conf /etc/apache2/conf-available/
+apache-perfsonar_host_exporter.conf /etc/apache2/conf-available/
 exporter_opts.sh /usr/lib/perfsonar/host_metrics/
+perfsonar_host_exporter /usr/lib/perfsonar/host_metrics/
+perfsonar-host-exporter.service lib/systemd/system/

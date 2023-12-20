@@ -1,0 +1,12 @@
+[Unit]
+Description=perfSONAR Host Exporter
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/perfsonar/host_metrics/perfsonar_host_exporter
+Restart=always
+RestartSec=30s
+
+[Install]
+WantedBy=multi-user.target
