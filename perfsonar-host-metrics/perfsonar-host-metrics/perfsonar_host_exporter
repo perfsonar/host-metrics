@@ -24,9 +24,13 @@ class PSMetricsWebHandler(BaseHTTPRequestHandler):
         ##
         # Exec pscheduler metrics command
         ps_metric_output = ""
-        result = subprocess.run(["pscheduler", "metrics", "--format", "prometheus"], text=True, capture_output=True)
-        if result and result.returncode == 0 and result.stdout:
-            ps_metric_output = result.stdout
+        try:
+            result = subprocess.run(["pscheduler", "metrics", "--format", "prometheus"], text=True, capture_output=True)
+            if result and result.returncode == 0 and result.stdout:
+                ps_metric_output = result.stdout
+        except:
+            # probably not installed, so ignore
+            pass
 
         return ps_metric_output
 
