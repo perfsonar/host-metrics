@@ -8,6 +8,7 @@ set -e
 case "$1" in
     configure)
         # check if installation or update, where version is a parameter
+        chmod 755 /usr/lib/perfsonar/host_metrics/perfsonar_host_exporter
         if [ -z "$2" ]; then
 
             #set node_exporter opts
