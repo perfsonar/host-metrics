@@ -1,9 +1,10 @@
 Source: prometheus-node-exporter
-Section: misc
-Priority: optional
-Build-Depends:
- debhelper (>= 10)
 Maintainer: perfSONAR developers <debian@perfsonar.net>
+Section: net
+Priority: optional
+Standards-Version: 4.3.0
+Build-Depends: debhelper (>= 10)
+Homepage: http://www.perfsonar.net
 
 Package: prometheus-node-exporter
 Architecture: any
