@@ -22,12 +22,15 @@ URL:			http://www.perfsonar.net
 Source0:		perfsonar-host-metrics-%{version}.tar.gz
 BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:		noarch
+
+# TODO: This depends on pScheduler and probably shouldn't.  Fix that.
+Buildrequires:  pscheduler-rpm
 Requires:       perfsonar-common
 Requires:       openssl
 Requires:       prometheus-node-exporter
-Requires:       python-perfsonar-psconfig
-Requires:       python-pscheduler
-Requires:       python-requests
+Requires:       %{_pscheduler_python}-perfsonar-psconfig
+Requires:       %{_pscheduler_python}-pscheduler
+Requires:       %{_pscheduler_python}-requests
 Requires:       httpd
 Requires:       mod_ssl
 Requires:       selinux-policy-%{selinuxtype}
