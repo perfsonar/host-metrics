@@ -18,3 +18,7 @@ endif
 	install -m 755 perfsonar_host_exporter ${PERFSONAR-ROOTPATH}/
 	install -m 644 apache-node_exporter.conf ${HTTPD-CONFIGPATH}/
 	install -m 644 apache-perfsonar_host_exporter.conf ${HTTPD-CONFIGPATH}/
+
+clean:
+	@true
+
