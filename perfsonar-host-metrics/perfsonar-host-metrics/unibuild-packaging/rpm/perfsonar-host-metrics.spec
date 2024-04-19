@@ -24,7 +24,7 @@ BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:		noarch
 
 # TODO: This depends on pScheduler and probably shouldn't.  Fix that.
-Buildrequires:  pscheduler-rpm
+BuildRequires:  pscheduler-rpm
 Requires:       perfsonar-common
 Requires:       openssl
 Requires:       prometheus-node-exporter
