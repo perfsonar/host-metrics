@@ -9,6 +9,6 @@ Homepage: http://www.perfsonar.net
 Package: prometheus-node-exporter
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Description: Prometheus exporter for machine metrics, written in Go with pluggable metric collectors.
+Description: Prometheus exporter for machine metrics
  Prometheus exporter for hardware and OS metrics exposed by *NIX kernels,
  written in Go with pluggable metric collectors.

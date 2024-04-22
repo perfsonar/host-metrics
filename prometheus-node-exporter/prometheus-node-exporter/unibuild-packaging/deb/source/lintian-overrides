@@ -1,5 +1,2 @@
 # Override source-is-missing errors for architecture-specific binaries
-prometheus-node-exporter source: source-is-missing [bin/node_exporter.aarch64]
-prometheus-node-exporter source: source-is-missing [bin/node_exporter.armv7]
-prometheus-node-exporter source: source-is-missing [bin/node_exporter.ppc64le]
-prometheus-node-exporter source: source-is-missing [bin/node_exporter.x86_64]
+prometheus-node-exporter source: source-is-missing bin/node_exporter.*
