@@ -28,9 +28,9 @@ BuildRequires:  pscheduler-rpm
 Requires:       perfsonar-common
 Requires:       openssl
 Requires:       prometheus-node-exporter
-Requires:       %{_pscheduler_python}-perfsonar-psconfig
-Requires:       %{_pscheduler_python}-pscheduler
-Requires:       %{_pscheduler_python}-requests
+Requires:       %{_python}-perfsonar-psconfig
+Requires:       %{_python}-pscheduler
+Requires:       %{_python}-requests
 Requires:       httpd
 Requires:       mod_ssl
 Requires:       selinux-policy-%{selinuxtype}
