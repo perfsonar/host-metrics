@@ -1,1 +1,2 @@
 prometheus-node-exporter: statically-linked-binary
+prometheus-node-exporter: binary-without-manpage bin/node_exporter
