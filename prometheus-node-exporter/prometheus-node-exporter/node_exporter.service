@@ -1,4 +1,5 @@
 # -*- mode: conf -*-
+# Simple service file
 
 [Unit]
 Description=Prometheus exporter for machine metrics, written in Go with pluggable metric collectors.
