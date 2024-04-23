@@ -12,6 +12,28 @@
 # default boolean value needs to be changed to enable http proxy
 %global selinuxbooleans httpd_can_network_connect=1
 
+#
+# Python
+#
+
+# This is the version we like.
+%define _python_version_major 3
+
+%if 0%{?el7}
+%error EL7 is no longer supported.  Try something newer.
+%endif
+
+%if 0%{?el8}%{?ol8}
+# EL8 standardized on just the major version, as did EPEL.
+%define _python python%{_python_version_major}
+
+%else
+
+# EL9+ has everyting as just plain python
+%define _python python
+
+%endif
+
 Name:			perfsonar-host-metrics
 Version:		%{perfsonar_auto_version}
 Release:		%{perfsonar_auto_relnum}%{?dist}
@@ -23,8 +45,6 @@ Source0:		perfsonar-host-metrics-%{version}.tar.gz
 BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:		noarch
 
-# TODO: This depends on pScheduler and probably shouldn't.  Fix that.
-BuildRequires:  pscheduler-rpm
 Requires:       perfsonar-common
 Requires:       openssl
 Requires:       prometheus-node-exporter
