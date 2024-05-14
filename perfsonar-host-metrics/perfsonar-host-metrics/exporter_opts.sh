@@ -1,12 +1,13 @@
 #!/bin/bash
 
 TARGET_FILE="/etc/default/node_exporter"
-EDIT_MARKER='#Edited by PS_HOST_METRICS'
-grep -q PS_HOST_METRICS ${TARGET_FILE}
+#bump version when you make changes
+EDIT_MARKER='#Edited by PS_HOST_METRICS - v2'
+grep -q "${EDIT_MARKER}" ${TARGET_FILE}
 if [ $? -eq 1 ]; then
     TEMPFILE=$(mktemp)
     echo ${EDIT_MARKER} > ${TEMPFILE}
-    OPTS="--collector.sysctl"
+    OPTS="--collector.netdev.address-info --collector.sysctl"
     OPTS="${OPTS} --collector.sysctl.include=net.core.rmem_max"
     OPTS="${OPTS} --collector.sysctl.include=net.core.rmem_default"
     OPTS="${OPTS} --collector.sysctl.include=net.core.wmem_max"
