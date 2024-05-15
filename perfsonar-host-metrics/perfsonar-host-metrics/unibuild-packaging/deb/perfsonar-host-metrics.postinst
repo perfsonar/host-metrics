@@ -9,11 +9,9 @@ case "$1" in
     configure)
         # check if installation or update, where version is a parameter
         chmod 755 /usr/lib/perfsonar/host_metrics/perfsonar_host_exporter
+        #set node_exporter opts
+        bash /usr/lib/perfsonar/host_metrics/exporter_opts.sh
         if [ -z "$2" ]; then
-
-            #set node_exporter opts
-            bash /usr/lib/perfsonar/host_metrics/exporter_opts.sh
-            
             #enable exporters - ignore errors for docker build env
             systemctl daemon-reload || :
             systemctl enable node_exporter.service || :

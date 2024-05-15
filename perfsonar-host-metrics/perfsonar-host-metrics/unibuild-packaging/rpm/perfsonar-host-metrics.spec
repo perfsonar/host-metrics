@@ -108,6 +108,9 @@ if [ "$1" = "1" ]; then
     #Enable and restart apache for reverse proxy
     systemctl enable httpd
     systemctl restart httpd
+else
+    #update node_exporter to monitor pS processes
+    %{pkg_install_base}/exporter_opts.sh
 fi
 
 %preun
