@@ -7,6 +7,8 @@ set -e
 
 case "$1" in
     configure)
+        # This link is necessary because the WSGI script imports the application using a path relative to the WSGI config directory.
+        ln -sT -f /usr/lib/perfsonar/host_metrics/ /var/www/html/perfsonar/host_exporter/host_exporter
         # check if installation or update, where version is a parameter
         chmod 755 /usr/lib/perfsonar/host_metrics/perfsonar_host_exporter
         #set node_exporter opts
@@ -16,9 +18,8 @@ case "$1" in
             systemctl daemon-reload || :
             systemctl enable node_exporter.service || :
             systemctl restart node_exporter.service || :
-            systemctl enable perfsonar-host-exporter.service || :
-            systemctl restart perfsonar-host-exporter.service || :
 
+            # Enable and restart apache for wsgi and reverse proxy
             # Apache setup
             if [ -e /usr/share/apache2/apache2-maintscript-helper ]; then
                 . /usr/share/apache2/apache2-maintscript-helper
@@ -27,6 +28,7 @@ case "$1" in
                 apache2_invoke ensite default-ssl
                 apache2_invoke enmod proxy
                 apache2_invoke enmod proxy_http
+                apache2_invoke enconf mod-wsgi
                 apache2_invoke enconf apache-node_exporter
                 apache2_invoke enconf apache-perfsonar_host_exporter
             fi
