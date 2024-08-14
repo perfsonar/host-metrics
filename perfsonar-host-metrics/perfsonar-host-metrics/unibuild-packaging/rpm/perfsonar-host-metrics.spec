@@ -52,8 +52,11 @@ Requires:       prometheus-node-exporter
 Requires:       %{_python}-perfsonar-psconfig
 Requires:       %{_python}-pscheduler
 Requires:       %{_python}-requests
+Requires:       python3
+Requires:       python3-flask
 Requires:       httpd
 Requires:       mod_ssl
+Requires:       mod_wsgi > 4.0
 Requires:       selinux-policy-%{selinuxtype}
 Requires(post): selinux-policy-%{selinuxtype}
 BuildRequires:  selinux-policy-devel
@@ -81,6 +84,7 @@ mv selinux/*.pp %{buildroot}/usr/share/selinux/packages/
 rm -rf %{buildroot}
 
 %post
+# This link is necessary because the WSGI script imports the application using a path relative to the WSGI config directory.
 ln -sT -f %{pkg_install_base} %{wsgi_config_base}/host_exporter
 
 #selinux
