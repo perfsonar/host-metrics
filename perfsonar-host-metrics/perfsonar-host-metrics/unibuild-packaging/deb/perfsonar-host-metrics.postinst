@@ -10,7 +10,7 @@ case "$1" in
         # This link is necessary because the WSGI script imports the application using a path relative to the WSGI config directory.
         ln -sT -f /usr/lib/perfsonar/host_metrics/ /var/www/html/perfsonar/host_exporter/host_exporter
         # check if installation or update, where version is a parameter
-        chmod 755 /usr/lib/perfsonar/host_metrics/perfsonar_host_exporter
+        chmod 755 /usr/lib/perfsonar/host_metrics/perfsonar_host_exporter.py
         #set node_exporter opts
         bash /usr/lib/perfsonar/host_metrics/exporter_opts.sh
         if [ -z "$2" ]; then
@@ -28,7 +28,6 @@ case "$1" in
                 apache2_invoke ensite default-ssl
                 apache2_invoke enmod proxy
                 apache2_invoke enmod proxy_http
-                apache2_invoke enconf mod-wsgi
                 apache2_invoke enconf apache-node_exporter
                 apache2_invoke enconf apache-perfsonar_host_exporter
             fi
