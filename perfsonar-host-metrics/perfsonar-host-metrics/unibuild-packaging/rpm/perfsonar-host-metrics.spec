@@ -1,6 +1,7 @@
 %define install_base        /usr/lib/perfsonar
 %define pkg_install_base    %{install_base}/host_metrics
 %define httpd_config_base   /etc/httpd/conf.d
+%define wsgi_config_base    /var/www/html/perfsonar/host_exporter
 
 #Version variables set by automated scripts
 %define perfsonar_auto_version 5.2.0
@@ -51,8 +52,11 @@ Requires:       prometheus-node-exporter
 Requires:       %{_python}-perfsonar-psconfig
 Requires:       %{_python}-pscheduler
 Requires:       %{_python}-requests
+Requires:       python3
+Requires:       python3-flask
 Requires:       httpd
 Requires:       mod_ssl
+Requires:       mod_wsgi > 4.0
 Requires:       selinux-policy-%{selinuxtype}
 Requires(post): selinux-policy-%{selinuxtype}
 BuildRequires:  selinux-policy-devel
@@ -72,9 +76,7 @@ A package that installs and sets-up Prometheus node_exporter for a perfSONAR ins
 make -f /usr/share/selinux/devel/Makefile -C selinux perfsonar_host_metrics.pp
 
 %install
-make PERFSONAR-ROOTPATH=%{buildroot}/%{pkg_install_base} HTTPD-CONFIGPATH=%{buildroot}/%{httpd_config_base} install
-mkdir -p %{buildroot}/%{_unitdir}/
-install -m 644 *.service %{buildroot}/%{_unitdir}/
+make PERFSONAR-ROOTPATH=%{buildroot}/%{pkg_install_base} HTTPD-CONFIGPATH=%{buildroot}/%{httpd_config_base} WSGI-CONFIGPATH=%{buildroot}/%{wsgi_config_base} install
 mkdir -p %{buildroot}/usr/share/selinux/packages/
 mv selinux/*.pp %{buildroot}/usr/share/selinux/packages/
 
@@ -82,6 +84,8 @@ mv selinux/*.pp %{buildroot}/usr/share/selinux/packages/
 rm -rf %{buildroot}
 
 %post
+# This link is necessary because the WSGI script imports the application using a path relative to the WSGI config directory.
+ln -sT -f %{pkg_install_base} %{wsgi_config_base}/host_exporter
 
 #selinux
 semodule -n -i /usr/share/selinux/packages/perfsonar_host_metrics.pp
@@ -91,7 +95,6 @@ fi
 
 #Restart/enable opensearch and logstash
 %systemd_post node_exporter.service
-%systemd_post perfsonar-host-exporter.service
 if [ "$1" = "1" ]; then
     #set SELinux booleans to allow httpd proxy to work
     %selinux_set_booleans -s %{selinuxtype} %{selinuxbooleans}
@@ -103,8 +106,6 @@ if [ "$1" = "1" ]; then
     systemctl daemon-reload
     systemctl enable node_exporter.service
     systemctl restart node_exporter.service
-    systemctl enable perfsonar-host-exporter.service
-    systemctl restart perfsonar-host-exporter.service
     #Enable and restart apache for reverse proxy
     systemctl enable httpd
     systemctl restart httpd
@@ -115,11 +116,10 @@ fi
 
 %preun
 %systemd_preun node_exporter.service
-%systemd_preun perfsonar-host-exporter.service
 
 %postun
++%{__rm} -f %{wsgi_config_base}/host_exporter
 %systemd_postun_with_restart node_exporter.service
-%systemd_postun_with_restart perfsonar-host-exporter.service
 if [ $1 -eq 0 ]; then
     %selinux_unset_booleans -s %{selinuxtype} %{selinuxbooleans}
     semodule -n -r perfsonar_host_metrics
@@ -132,11 +132,11 @@ fi
 %defattr(0644,perfsonar,perfsonar,0755)
 %license LICENSE
 %attr(0755, perfsonar, perfsonar) %{pkg_install_base}/exporter_opts.sh
-%attr(0755, perfsonar, perfsonar) %{pkg_install_base}/perfsonar_host_exporter
+%attr(0755, perfsonar, perfsonar) %{pkg_install_base}/perfsonar_host_exporter.py
 %attr(0644, perfsonar, perfsonar) %{httpd_config_base}/apache-node_exporter.conf
 %attr(0644, perfsonar, perfsonar) %{httpd_config_base}/apache-perfsonar_host_exporter.conf
+%attr(0644, perfsonar, perfsonar) %{wsgi_config_base}/host_exporter.wsgi
 %attr(0644,root,root) /usr/share/selinux/packages/*
-%{_unitdir}/perfsonar-host-exporter.service
 
 %changelog
 * Tue Oct 24 2023 andy@es.net 5.0.5-0.0.a1

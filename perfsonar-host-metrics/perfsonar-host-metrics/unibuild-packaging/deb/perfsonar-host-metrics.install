@@ -1,5 +1,5 @@
 apache-node_exporter.conf /etc/apache2/conf-available/
 apache-perfsonar_host_exporter.conf /etc/apache2/conf-available/
 exporter_opts.sh /usr/lib/perfsonar/host_metrics/
-perfsonar_host_exporter /usr/lib/perfsonar/host_metrics/
-perfsonar-host-exporter.service lib/systemd/system/
+perfsonar_host_exporter.py /usr/lib/perfsonar/host_metrics/
+host_exporter.wsgi /var/www/html/perfsonar/host_exporter

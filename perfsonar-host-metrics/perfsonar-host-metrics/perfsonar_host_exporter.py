@@ -6,9 +6,11 @@ import requests
 import subprocess
 from psconfig.utilities.metrics import PSConfigMetricCalculator
 from psconfig.utilities.cli import PSCONFIG_CLI_AGENTS
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from flask import Flask, Response
 
-class PSMetricsWebHandler(BaseHTTPRequestHandler):
+app = Flask(__name__)
+
+class PSMetricsWebHandler:
     LS_BASE_URL = "http://35.223.142.206:8090/lookup/records"
 
     def _read_one_liner(self, filename):
@@ -111,31 +113,24 @@ class PSMetricsWebHandler(BaseHTTPRequestHandler):
             ps_metric_output += 'perfsonar_host_registered{{uuid="{}"}} {}\n'.format(uuid, self._is_registered(uuid))
 
         return ps_metric_output
-
-    def do_GET(self):
+    
+    def gather_metrics(self):
         ps_metric_output = ""
-
-        ##
         # toolkit/bundle metrics
-        ps_metric_output += self.bundle_metrics() 
-
-        ##
+        ps_metric_output += self.bundle_metrics()
         # pScheduler metrics
         ps_metric_output += self.pscheduler_metrics()
-
-        ##
         # pSConfig Metrics
         ps_metric_output += self.psconfig_metrics()
-
-        ##
         # LS client uuid
         ps_metric_output += self.lookup_svc_metrics()
-            
-        self.send_response(200)
-        self.send_header("Content-Type", "text/plain")
-        self.end_headers()
-        self.wfile.write(ps_metric_output.encode("utf-8"))
+        return ps_metric_output
 
+@app.route("/")
+def metrics():
+    handler = PSMetricsWebHandler()
+    metrics_data = handler.gather_metrics()
+    return Response(metrics_data, status=200, mimetype="text/plain")
 
 if __name__ == "__main__":
     ##
@@ -147,7 +142,5 @@ if __name__ == "__main__":
     parser.add_argument('--host', dest='host', action='store', default='localhost', help='The host to listen for connections. 0.0.0.0 means all interfaces.')
     parser.add_argument('--port', dest='port', action='store', type=int, default=11284, help='The port on which to listen for connections.')
     args = parser.parse_args()
-    
-    #Build server
-    server = ThreadingHTTPServer((args.host, args.port), PSMetricsWebHandler)
-    server.serve_forever()
+
+    app.run(host=args.host, port=args.port)
