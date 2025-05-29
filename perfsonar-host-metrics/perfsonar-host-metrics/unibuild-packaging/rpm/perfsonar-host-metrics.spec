@@ -64,7 +64,6 @@ Requires:       policycoreutils, libselinux-utils
 Requires(post): policycoreutils
 Requires(postun): policycoreutils
 
-%{?selinux_requires}
 
 %description
 A package that installs and sets-up Prometheus node_exporter for a perfSONAR install
