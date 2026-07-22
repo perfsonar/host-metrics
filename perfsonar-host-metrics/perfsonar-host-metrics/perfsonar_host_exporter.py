@@ -11,7 +11,7 @@ from flask import Flask, Response
 app = Flask(__name__)
 
 class PSMetricsWebHandler:
-    LS_BASE_URL = "http://35.223.142.206:8090/lookup/records"
+    LS_BASE_URL = "http://35.223.142.206/lookup/_search"
 
     def _read_one_liner(self, filename):
         value = ""
@@ -88,11 +88,37 @@ class PSMetricsWebHandler:
         return ps_metric_output
 
     def _is_registered(self, uuid):
-        ls_url = "{}?type=host&client-uuid={}".format(self.LS_BASE_URL, uuid)
+
+        query = {
+            "query": {
+                "bool": {
+                    "must": [
+                        {"match":{
+                            "type": "host"
+                        }},
+                        {
+                            "match": {
+                            "client-uuid": ""
+                            }
+                        },
+                        {
+                            "range": {
+                            "expires": {
+                                "gt": "now"
+                            }
+                            }
+                        }
+                        ]
+                    }
+                }
+            }
+
+        query["query"]["bool"]["must"][1]["match"]["client-uuid"] = uuid
+        
         try:
-            r = requests.get(ls_url, timeout=3)
+            r = requests.get(self.LS_BASE_URL, json=query, timeout=3)
             r.raise_for_status()
-            if r and r.json() and r.json()[0].get("client-uuid", None):
+            if r and r.json() and r.json()['hits']['hits'][0]['_source'].get("client-uuid", [None])[0]:
                 return 1
         except:
             pass
